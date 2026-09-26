@@ -1,0 +1,128 @@
+{
+  "info": {
+    "_postman_id": "bb6f129c-e8f8-4dd8-a7f8-1a5cb6f00a84",
+    "name": "A1 - Authors and Books API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "POST /authors - criar autor",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Autor criado', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('author_id', pm.response.json().id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"A1 Postman {{$guid}}\",\n  \"biography\": \"Escritora brasileira.\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/authors" }
+      }
+    },
+    {
+      "name": "POST /books - criar livro",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Livro criado', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('book_id', pm.response.json().id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"A Hora da Estrela\",\n  \"release_year\": 1977,\n  \"author_id\": \"{{author_id}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/books" }
+      }
+    },
+    {
+      "name": "GET /books - listar com autor",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Lista inclui o autor relacionado', function () {",
+              "  pm.response.to.have.status(200);",
+              "  const books = pm.response.json();",
+              "  pm.expect(books.some((book) => book.id === pm.collectionVariables.get('book_id') && book.author && book.author.id === pm.collectionVariables.get('author_id'))).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/books" }
+      }
+    },
+    {
+      "name": "PUT /books/:id - atualizar livro",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Livro atualizado', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"A Hora da Estrela - Edição revista\",\n  \"release_year\": 1977,\n  \"author_id\": \"{{author_id}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/books/{{book_id}}" }
+      }
+    },
+    {
+      "name": "DELETE /books/:id - excluir livro",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Livro excluído', function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/books/{{book_id}}" }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "author_id", "value": "" },
+    { "key": "book_id", "value": "" }
+  ]
+}
